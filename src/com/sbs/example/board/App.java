@@ -107,6 +107,19 @@ public class App {
 			
 			int id = Integer.parseInt(cmd.split(" ")[2].trim());
 			
+			SecSql sql = new SecSql();
+			
+			sql.append("SELECT COUNT(*)");
+			sql.append("FROM article");
+			sql.append("WHERE id = ?", id);
+			
+			int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+			
+			if(articlesCount == 0) {
+				System.out.printf("%d번 게시글이 존재하지 않습니다.\n", id);
+				return 0;
+			}
+			
 			String title;
 			String body;
 			
@@ -116,7 +129,7 @@ public class App {
 			System.out.printf("새 내용: ");
 			body = scanner.nextLine();
 			
-			SecSql sql = new SecSql();
+			sql = new SecSql();
 			
 			sql.append("UPDATE article");
 			sql.append("SET regDate = NOW()");
@@ -128,6 +141,34 @@ public class App {
 			DBUtil.update(conn, sql);
 			
 			System.out.printf("%d번 글이 수정되었습니다.\n", id);
+			
+		} else if (cmd.startsWith("article delete")) {
+			
+			int id = Integer.parseInt(cmd.split(" ")[2].trim());
+			
+			SecSql sql = new SecSql();
+			
+			sql.append("SELECT COUNT(*)");
+			sql.append("FROM article");
+			sql.append("WHERE id = ?", id);
+			
+			int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+			
+			if(articlesCount == 0) {
+				System.out.printf("%d번 게시글이 존재하지 않습니다.\n", id);
+				return 0;
+			}
+			
+			System.out.println("== 게시글 삭제 ==");
+			
+			sql = new SecSql();
+			
+			sql.append("DELETE FROM article");
+			sql.append("WHERE id = ?", id);
+			
+			DBUtil.delete(conn, sql);
+			
+			System.out.printf("%d번 글이 삭제되었습니다.\n", id);
 			
 		} else if (cmd.equals("system exit")) {
 			System.out.println("프로그램을 종료합니다.");
