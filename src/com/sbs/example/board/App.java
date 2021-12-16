@@ -229,18 +229,106 @@ public class App {
 			String loginId;
 			String loginPw;
 			String loginPwConfirm;
+			String name;
 			
 			System.out.println("== 회원가입 ==");
 			
-			System.out.printf("로그인 아이디: ");
-			loginId = scanner.nextLine();
+			SecSql sql = new SecSql();
+			
+			int joinTry = 0;
 			
 			while (true) {
+				if (joinTry >= 3) {
+					System.out.println("회원가입을 다시 시도해주세요.");
+					return 0;
+				}
+				
+				System.out.printf("로그인 아이디: ");
+				loginId = scanner.nextLine();
+				
 				if(loginId.length() == 0) {
 					System.out.println("아이디를 입력해주세요.");
+					joinTry++;
 					continue;
 				}
+				
+				sql.append("SELECT COUNT(*) FROM `member`");
+				sql.append("WHERE loginId = ?", loginId);
+				
+				int memberCnt = DBUtil.selectRowIntValue(conn, sql);
+				
+				if(memberCnt > 0) {
+					System.out.println("이미 존재하는 아이디입니다.");
+					joinTry++;
+					continue;
+				}
+				
+				break;
 			}
+			
+			joinTry = 0;
+			
+			while (true) {
+				if (joinTry >= 3) {
+					System.out.println("회원가입을 다시 시도해주세요.");
+					return 0;
+				}
+				
+				System.out.printf("로그인 비밀번호: ");
+				loginPw = scanner.nextLine();
+				
+				if (loginPw.length() == 0) {
+					System.out.println("비밀번호를 입력해주세요.");
+					joinTry++;
+					continue;
+				}
+				
+				while (true) {
+					System.out.printf("로그인 비밀번호 확인: ");
+					loginPwConfirm = scanner.nextLine();
+					
+					if(loginPwConfirm.length() == 0) {
+						System.out.println("비밀번호 확인을 입력해주세요.");
+						continue;
+					}
+					
+					break;
+				}
+				
+				if (!loginPw.equals(loginPwConfirm)) {
+					System.out.println("입력된 비밀번호가 일치하지 않습니다.");
+					joinTry++;
+					continue;
+				}
+				
+				break;
+				
+			}
+			
+			while (true) {
+				System.out.printf("이름: ");
+				name = scanner.nextLine();
+				
+				if(name.length() == 0) {
+					System.out.println("이름을 입력해주세요.");
+					continue;
+				}
+				
+				break;
+			}
+			
+			sql = new SecSql();
+			
+			sql.append("INSERT INTO member");
+			sql.append("SET regDate = NOW()");
+			sql.append(", updateDate = NOW()");
+			sql.append(", loginId = ?", loginId);
+			sql.append(", loginPw = ?", loginPw);
+			sql.append(", name = ?", name);
+			
+			DBUtil.insert(conn, sql);
+			
+			System.out.printf("%s님 환영합니다.\n", name);
 			
 		} else if (cmd.equals("system exit")) {
 			System.out.println("프로그램을 종료합니다.");

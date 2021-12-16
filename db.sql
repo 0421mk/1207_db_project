@@ -30,3 +30,8 @@ CREATE TABLE `member` (
 );
 
 DESC `member`;
+
+SELECT COUNT(*) FROM `member`
+WHERE loginId = 'admin';
+
+SELECT * FROM `member`;
