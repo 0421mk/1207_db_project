@@ -13,3 +13,20 @@ CREATE TABLE article (
 );
 
 DESC article;
+SELECT * FROM article;
+
+SELECT COUNT(*)
+FROM article
+WHERE id = 3;
+
+CREATE TABLE `member` (
+    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(id),
+    regDate DATETIME NOT NULL,
+    updateDate DATETIME NOT NULL,
+    loginId CHAR(100) NOT NULL,
+    loginPw CHAR(100) NOT NULL,
+    `name` CHAR(100) NOT NULL
+);
+
+DESC `member`;

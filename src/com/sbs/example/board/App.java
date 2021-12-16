@@ -103,7 +103,14 @@ public class App {
 				System.out.printf("%d / %s\n", article.id, article.title);
 			}
 			
-		} else if (cmd.startsWith("article modify")) {
+		} else if (cmd.startsWith("article modify ")) {
+			
+			boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
+			
+			if(!isInt) {
+				System.out.println("게시글의 ID를 숫자로 입력해주세요.");
+				return 0;
+			}
 			
 			int id = Integer.parseInt(cmd.split(" ")[2].trim());
 			
@@ -142,7 +149,54 @@ public class App {
 			
 			System.out.printf("%d번 글이 수정되었습니다.\n", id);
 			
-		} else if (cmd.startsWith("article delete")) {
+		} else if (cmd.startsWith("article detail ")) {
+			
+			boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
+			
+			if(!isInt) {
+				System.out.println("게시글의 ID를 숫자로 입력해주세요.");
+				return 0;
+			}
+			
+			int id = Integer.parseInt(cmd.split(" ")[2].trim());
+			
+			SecSql sql = new SecSql();
+			
+			sql.append("SELECT COUNT(*)");
+			sql.append("FROM article");
+			sql.append("WHERE id = ?", id);
+			
+			int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+			
+			if(articlesCount == 0) {
+				System.out.printf("%d번 게시글이 존재하지 않습니다.\n", id);
+				return 0;
+			}
+			
+			sql = new SecSql();
+			
+			sql.append("SELECT *");
+			sql.append("FROM article");
+			sql.append("WHERE id = ?", id);
+			
+			Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
+			
+			Article article = new Article(articleMap);
+			
+			System.out.printf("번호: %d\n", article.id);
+			System.out.printf("등록날짜: %s\n", article.regDate);
+			System.out.printf("수정날짜: %s\n", article.updateDate);
+			System.out.printf("제목: %s\n", article.title);
+			System.out.printf("내용: %s\n", article.body);
+			
+		} else if (cmd.startsWith("article delete ")) {
+			
+			boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
+			
+			if(!isInt) {
+				System.out.println("게시글의 ID를 숫자로 입력해주세요.");
+				return 0;
+			}
 			
 			int id = Integer.parseInt(cmd.split(" ")[2].trim());
 			
@@ -169,6 +223,24 @@ public class App {
 			DBUtil.delete(conn, sql);
 			
 			System.out.printf("%d번 글이 삭제되었습니다.\n", id);
+			
+		} else if (cmd.equals("member join")) {
+			
+			String loginId;
+			String loginPw;
+			String loginPwConfirm;
+			
+			System.out.println("== 회원가입 ==");
+			
+			System.out.printf("로그인 아이디: ");
+			loginId = scanner.nextLine();
+			
+			while (true) {
+				if(loginId.length() == 0) {
+					System.out.println("아이디를 입력해주세요.");
+					continue;
+				}
+			}
 			
 		} else if (cmd.equals("system exit")) {
 			System.out.println("프로그램을 종료합니다.");
