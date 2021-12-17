@@ -225,6 +225,27 @@ public class App {
 			
 			System.out.printf("%d번 글이 삭제되었습니다.\n", id);
 			
+		} else if (cmd.equals("member logout")) {
+			
+			if (session.loginedMember == null) {
+				System.out.println("로그인 유저가 없습니다.");
+				return 0;
+			}
+			
+			session.loginedMemberId = -1;
+			session.loginedMember = null;
+			
+			System.out.println("로그아웃 완료");
+			
+		} else if (cmd.equals("whoami")) {
+			
+			if (session.loginedMember == null) {
+				System.out.println("로그인 유저가 없습니다.");
+				return 0;
+			}
+			
+			System.out.printf("현재 로그인 유저: %s\n", session.loginedMember.name);
+			
 		} else if (cmd.equals("member login")) {
 			
 			String loginId;
