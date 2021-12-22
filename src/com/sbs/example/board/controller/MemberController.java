@@ -1,17 +1,13 @@
 package com.sbs.example.board.controller;
 
 import java.sql.Connection;
-import java.util.Map;
 import java.util.Scanner;
 
 import com.sbs.example.board.dto.Member;
 import com.sbs.example.board.service.MemberService;
 import com.sbs.example.board.session.Session;
-import com.sbs.example.board.util.DBUtil;
-import com.sbs.example.board.util.SecSql;
 
 public class MemberController {
-	Connection conn;
 	Scanner scanner;
 	String cmd;
 	Session session;
@@ -19,7 +15,6 @@ public class MemberController {
 	MemberService memberService;
 	
 	public MemberController(Connection conn, Scanner scanner, String cmd, Session session) {
-		this.conn = conn;
 		this.scanner = scanner;
 		this.cmd = cmd;
 		this.session = session;
@@ -34,12 +29,9 @@ public class MemberController {
 		
 		System.out.println("== 로그인 ==");
 		
-		SecSql sql;
-		
 		int joinTry = 0;
 		
 		while(true) {
-			sql = new SecSql();
 			
 			if (joinTry >= 3) {
 				System.out.println("로그인을 다시 시도해주세요.");
@@ -55,10 +47,7 @@ public class MemberController {
 				continue;
 			}
 			
-			sql.append("SELECT COUNT(*) FROM member");
-			sql.append("WHERE loginId = ?", loginId);
-			
-			int memberCnt = DBUtil.selectRowIntValue(conn, sql);
+			int memberCnt = memberService.getMemberCntByLoginId(loginId);
 			
 			if(memberCnt == 0) {
 				System.out.println("아이디가 존재하지 않습니다.");
@@ -89,13 +78,7 @@ public class MemberController {
 			break;
 		}
 		
-		sql = new SecSql();
-		
-		sql.append("SELECT * FROM member");
-		sql.append("WHERE loginId = ?", loginId);
-		
-		Map<String, Object> memberMap = DBUtil.selectRow(conn, sql);
-		Member member = new Member(memberMap);
+		Member member = memberService.getMemberByLoginId(loginId);
 		
 		if(!member.loginPw.equals(loginPw)) {
 			System.out.println("비밀번호가 일치하지 않습니다.");
