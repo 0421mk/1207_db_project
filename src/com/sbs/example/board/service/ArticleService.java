@@ -29,4 +29,21 @@ public class ArticleService {
 		
 	}
 
+	public void doModify(String title, String body, int id) {
+		
+		articleDao.doModify(title, body, id);
+		
+	}
+
+	public Article getArticle(int id) {
+		// TODO Auto-generated method stub
+		return articleDao.getArticle(id);
+	}
+
+	public void doDelete(int id) {
+		
+		articleDao.doDelete(id);
+		
+	}
+
 }

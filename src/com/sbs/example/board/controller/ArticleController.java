@@ -1,16 +1,12 @@
 package com.sbs.example.board.controller;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import com.sbs.example.board.dto.Article;
 import com.sbs.example.board.service.ArticleService;
 import com.sbs.example.board.session.Session;
-import com.sbs.example.board.util.DBUtil;
-import com.sbs.example.board.util.SecSql;
 
 public class ArticleController {
 	Scanner scanner;
@@ -90,15 +86,7 @@ public class ArticleController {
 		System.out.printf("새 내용: ");
 		body = scanner.nextLine();
 		
-		SecSql sql = new SecSql();
-		
-		sql.append("UPDATE article");
-		sql.append("SET updateDate = NOW()");
-		sql.append(", title = ?", title);
-		sql.append(", body = ?", body);
-		sql.append("WHERE id = ?", id);
-		
-		DBUtil.update(conn, sql);
+		articleService.doModify(title, body, id);
 		
 		System.out.printf("%d번 글이 수정되었습니다.\n", id);
 		
@@ -115,28 +103,14 @@ public class ArticleController {
 		
 		int id = Integer.parseInt(cmd.split(" ")[2].trim());
 		
-		SecSql sql = new SecSql();
-		
-		sql.append("SELECT COUNT(*)");
-		sql.append("FROM article");
-		sql.append("WHERE id = ?", id);
-		
-		int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+		int articlesCount = articleService.getArticlesCntById(id);
 		
 		if(articlesCount == 0) {
 			System.out.printf("%d번 게시글이 존재하지 않습니다.\n", id);
 			return;
 		}
 		
-		sql = new SecSql();
-		
-		sql.append("SELECT *");
-		sql.append("FROM article");
-		sql.append("WHERE id = ?", id);
-		
-		Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
-		
-		Article article = new Article(articleMap);
+		Article article = articleService.getArticle(id);
 		
 		System.out.printf("번호: %d\n", article.id);
 		System.out.printf("등록날짜: %s\n", article.regDate);
@@ -157,13 +131,7 @@ public class ArticleController {
 		
 		int id = Integer.parseInt(cmd.split(" ")[2].trim());
 		
-		SecSql sql = new SecSql();
-		
-		sql.append("SELECT COUNT(*)");
-		sql.append("FROM article");
-		sql.append("WHERE id = ?", id);
-		
-		int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+		int articlesCount = articleService.getArticlesCntById(id);
 		
 		if(articlesCount == 0) {
 			System.out.printf("%d번 게시글이 존재하지 않습니다.\n", id);
@@ -172,12 +140,7 @@ public class ArticleController {
 		
 		System.out.println("== 게시글 삭제 ==");
 		
-		sql = new SecSql();
-		
-		sql.append("DELETE FROM article");
-		sql.append("WHERE id = ?", id);
-		
-		DBUtil.delete(conn, sql);
+		articleService.doDelete(id);
 		
 		System.out.printf("%d번 글이 삭제되었습니다.\n", id);
 		

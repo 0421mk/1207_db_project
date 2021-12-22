@@ -61,4 +61,45 @@ public class ArticleDao {
 		return DBUtil.selectRowIntValue(conn, sql);
 		
 	}
+
+	public void doModify(String title, String body, int id) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("UPDATE article");
+		sql.append("SET updateDate = NOW()");
+		sql.append(", title = ?", title);
+		sql.append(", body = ?", body);
+		sql.append("WHERE id = ?", id);
+		
+		DBUtil.update(conn, sql);
+		
+	}
+
+	public Article getArticle(int id) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("SELECT *");
+		sql.append("FROM article");
+		sql.append("WHERE id = ?", id);
+		
+		Map<String, Object> articleMap = DBUtil.selectRow(conn, sql);
+		
+		Article article = new Article(articleMap);
+		
+		return article;
+		
+	}
+
+	public void doDelete(int id) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("DELETE FROM article");
+		sql.append("WHERE id = ?", id);
+		
+		DBUtil.delete(conn, sql);
+		
+	}
 }
