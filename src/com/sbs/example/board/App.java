@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.sbs.example.board.controller.ArticleController;
+import com.sbs.example.board.controller.Controller;
 import com.sbs.example.board.controller.MemberController;
 import com.sbs.example.board.session.Session;
 import com.sbs.example.board.util.DBUtil;
@@ -32,11 +33,36 @@ public class App {
 				String cmd = scanner.nextLine();
 				cmd = cmd.trim();
 				
-				int actionResult = doAction(conn, scanner, cmd, session);
-				
-				if(actionResult == -1) {
+				if(cmd.equals("system exit")) {
+					System.out.println("프로그램을 종료합니다.");
 					break;
 				}
+				
+				String[] cmdBits = cmd.split(" ");
+				
+				if(cmdBits.length < 2) {
+					System.out.println("존재하지 않는 명령어입니다.");
+					continue;
+				}
+				
+				String controllerName = cmdBits[0];
+				
+				Controller controller = null;
+				
+				MemberController memberController = new MemberController(conn, scanner, cmd, session);
+				ArticleController articleController = new ArticleController(conn, scanner, cmd, session);
+				
+				if(controllerName.equals("article")) {
+					controller = articleController;
+				} else if(controllerName.equals("member")) {
+					controller = memberController;
+				} else {
+					System.out.println("잘못된 명령어입니다.");
+					continue;
+				}
+				
+				controller.doAction();
+				
 			}
 		} catch(ClassNotFoundException e) {
 			System.out.println("드라이버 로딩 실패");
@@ -51,56 +77,5 @@ public class App {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private int doAction(Connection conn, Scanner scanner, String cmd, Session session) {
-		
-		MemberController memberController = new MemberController(conn, scanner, cmd, session);
-		ArticleController articleController = new ArticleController(conn, scanner, cmd, session);
-		
-		if (cmd.equals("article write")) {
-			
-			articleController.doWrite();
-			
-		} else if (cmd.equals("article list")) {
-			
-			articleController.showList();
-			
-		} else if (cmd.startsWith("article modify ")) {
-			
-			articleController.doModify();
-			
-		} else if (cmd.startsWith("article detail ")) {
-			
-			articleController.showDetail();
-			
-		} else if (cmd.startsWith("article delete ")) {
-			
-			articleController.doDelete();
-			
-		} else if (cmd.equals("member logout")) {
-			
-			memberController.doLogout();
-			
-		} else if (cmd.equals("whoami")) {
-			
-			memberController.whoami();
-			
-		} else if (cmd.equals("member login")) {
-			
-			memberController.doLogin();
-			
-		} else if (cmd.equals("member join")) {
-			
-			memberController.doJoin();
-			
-		} else if (cmd.equals("system exit")) {
-			System.out.println("프로그램을 종료합니다.");
-			return -1;
-		} else {
-			System.out.println("잘못된 명령어입니다.");
-		}
-		
-		return 0;
 	}
 }

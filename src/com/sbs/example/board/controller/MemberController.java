@@ -7,12 +7,12 @@ import com.sbs.example.board.dto.Member;
 import com.sbs.example.board.service.MemberService;
 import com.sbs.example.board.session.Session;
 
-public class MemberController {
-	Scanner scanner;
-	String cmd;
-	Session session;
+public class MemberController extends Controller {
+	private Scanner scanner;
+	private String cmd;
+	private Session session;
 	
-	MemberService memberService;
+	private MemberService memberService;
 	
 	public MemberController(Connection conn, Scanner scanner, String cmd, Session session) {
 		this.scanner = scanner;
@@ -21,8 +21,25 @@ public class MemberController {
 		
 		memberService = new MemberService(conn);
 	}
+	
+	@Override
+	public void doAction() {
+		
+		if (cmd.equals("member login")) {
+			doLogin();
+		} else if (cmd.equals("member whoami")) {
+			whoami();
+		} else if (cmd.equals("member logout")) {
+			doLogout();
+		} else if (cmd.equals("member join")) {
+			doJoin();
+		} else {
+			System.out.println("존재하지 않는 명령어입니다.");
+		}
+		
+	}
 
-	public void doLogin() {
+	private void doLogin() {
 		
 		String loginId;
 		String loginPw;
@@ -92,7 +109,7 @@ public class MemberController {
 		
 	}
 
-	public void doJoin() {
+	private void doJoin() {
 		
 		String loginId;
 		String loginPw;
@@ -187,7 +204,7 @@ public class MemberController {
 		
 	}
 
-	public void whoami() {
+	private void whoami() {
 		
 		if (session.loginedMember == null) {
 			System.out.println("로그인 유저가 없습니다.");
@@ -198,7 +215,7 @@ public class MemberController {
 		
 	}
 
-	public void doLogout() {
+	private void doLogout() {
 		
 		if (session.loginedMember == null) {
 			System.out.println("로그인 유저가 없습니다.");
@@ -211,4 +228,5 @@ public class MemberController {
 		System.out.println("로그아웃 완료");
 		
 	}
+
 }

@@ -8,12 +8,12 @@ import com.sbs.example.board.dto.Article;
 import com.sbs.example.board.service.ArticleService;
 import com.sbs.example.board.session.Session;
 
-public class ArticleController {
-	Scanner scanner;
-	String cmd;
-	Session session;
+public class ArticleController extends Controller {
+	private Scanner scanner;
+	private String cmd;
+	private Session session;
 	
-	ArticleService articleService;
+	private ArticleService articleService;
 	
 	public ArticleController(Connection conn, Scanner scanner, String cmd, Session session) {
 		this.scanner = scanner;
@@ -22,8 +22,27 @@ public class ArticleController {
 		
 		articleService = new ArticleService(conn);
 	}
+	
+	@Override
+	public void doAction() {
+		
+		if (cmd.equals("article write")) {
+			doWrite();
+		} else if (cmd.equals("article list")) {
+			showList();
+		} else if (cmd.startsWith("article modify ")) {
+			doModify();
+		} else if (cmd.startsWith("article detail ")) {
+			showDetail();
+		} else if (cmd.startsWith("article delete ")) {
+			doDelete();
+		} else {
+			System.out.println("존재하지 않는 명령어입니다.");
+		}
+		
+	}
 
-	public void doWrite() {
+	private void doWrite() {
 		
 		String title;
 		String body;
@@ -41,7 +60,7 @@ public class ArticleController {
 		
 	}
 
-	public void showList() {
+	private void showList() {
 		
 		System.out.println("== 게시글 목록 ==");
 		
@@ -59,7 +78,7 @@ public class ArticleController {
 		
 	}
 
-	public void doModify() {
+	private void doModify() {
 		
 		boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
 		
@@ -92,7 +111,7 @@ public class ArticleController {
 		
 	}
 
-	public void showDetail() {
+	private void showDetail() {
 		
 		boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
 		
@@ -120,7 +139,7 @@ public class ArticleController {
 		
 	}
 
-	public void doDelete() {
+	private void doDelete() {
 		
 		boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
 		
