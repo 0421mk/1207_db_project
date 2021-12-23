@@ -8,6 +8,7 @@ public class Article {
 	private LocalDateTime regDate;
 	private LocalDateTime updateDate;
 	private int memberId;
+	private int hit;
 	private String title;
 	private String body;
 	private String extra_writer;
@@ -17,6 +18,7 @@ public class Article {
 		this.regDate = (LocalDateTime)articleMap.get("regDate");
 		this.updateDate = (LocalDateTime)articleMap.get("updateDate");
 		this.memberId = (int)articleMap.get("memberId");
+		this.hit = (int)articleMap.get("hit");
 		this.title = (String)articleMap.get("title");
 		this.body = (String)articleMap.get("body");
 		this.extra_writer = (String)articleMap.get("extra_writer");
@@ -76,5 +78,13 @@ public class Article {
 
 	public void setExtra_writer(String extra_writer) {
 		this.extra_writer = extra_writer;
+	}
+	
+	public int getHit() {
+		return hit;
+	}
+
+	public void setHit(int hit) {
+		this.hit = hit;
 	}
 }

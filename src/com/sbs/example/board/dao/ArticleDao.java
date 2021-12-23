@@ -43,6 +43,7 @@ public class ArticleDao {
 		sql.append("FROM article AS a");
 		sql.append("LEFT JOIN `member` AS m");
 		sql.append("ON a.memberId = m.id");
+		sql.append("ORDER BY a.id DESC");
 		
 		List<Map<String, Object>> articleListMap = DBUtil.selectRows(conn, sql);
 		
@@ -105,6 +106,18 @@ public class ArticleDao {
 		sql.append("WHERE id = ?", id);
 		
 		DBUtil.delete(conn, sql);
+		
+	}
+
+	public void increaseHit(int id) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("UPDATE article");
+		sql.append("SET hit = hit + 1");
+		sql.append("WHERE id = ?", id);
+		
+		DBUtil.update(conn, sql);
 		
 	}
 }
