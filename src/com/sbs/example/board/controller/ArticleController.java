@@ -76,9 +76,9 @@ public class ArticleController extends Controller {
 			return;
 		}
 		
-		System.out.println("번호 / 제목");
+		System.out.println("번호 / 제목 / 작성자");
 		for(Article article : articles) {
-			System.out.printf("%d / %s\n", article.getId(), article.getTitle());
+			System.out.printf("%d / %s / %s\n", article.getId(), article.getTitle(), article.getExtra_writer());
 		}
 		
 	}
@@ -106,6 +106,13 @@ public class ArticleController extends Controller {
 			return;
 		}
 		
+		Article article = articleService.getArticle(id);
+		
+		if (article.getMemberId() != session.getLoginedMemberId()) {
+			System.out.println("권한이 존재하지 않습니다.");
+			return;
+		}
+
 		String title;
 		String body;
 		
@@ -170,6 +177,13 @@ public class ArticleController extends Controller {
 		
 		if(articlesCount == 0) {
 			System.out.printf("%d번 게시글이 존재하지 않습니다.\n", id);
+			return;
+		}
+		
+		Article article = articleService.getArticle(id);
+		
+		if (article.getMemberId() != session.getLoginedMemberId()) {
+			System.out.println("권한이 존재하지 않습니다.");
 			return;
 		}
 		

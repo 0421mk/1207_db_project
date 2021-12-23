@@ -44,3 +44,10 @@ SELECT * FROM `member`;
 ALTER TABLE article ADD COLUMN memberId INT(10) UNSIGNED NOT NULL AFTER updateDate;
 
 DESC article;
+SELECT * FROM article;
+
+#select a.*, m.name as extra_writer
+#from article as a
+#left join `member` as m
+#on a.memberId = m.id
+#where a.id = 9;
