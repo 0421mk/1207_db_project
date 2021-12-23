@@ -13,14 +13,12 @@ public class ArticleService {
 		articleDao = new ArticleDao(conn);
 	}
 
-	public int doWrite(String title, String body) {
-		return articleDao.doWrite(title, body);
+	public int doWrite(String title, String body, int loginedMemberId) {
+		return articleDao.doWrite(title, body, loginedMemberId);
 	}
 
 	public List<Article> getArticles() {
-		
 		return articleDao.getArticles();
-		
 	}
 
 	public int getArticlesCntById(int id) {

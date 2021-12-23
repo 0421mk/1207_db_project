@@ -12,6 +12,12 @@ CREATE TABLE article (
     `body` TEXT NOT NULL
 );
 
+UPDATE article
+SET updateDate = NOW(),
+title = '안녕1',
+`body` = '반가워1'
+WHERE id = 6;
+
 DESC article;
 SELECT * FROM article;
 
@@ -35,3 +41,6 @@ SELECT COUNT(*) FROM `member`
 WHERE loginId = 'admin';
 
 SELECT * FROM `member`;
+ALTER TABLE article ADD COLUMN memberId INT(10) UNSIGNED NOT NULL AFTER updateDate;
+
+DESC article;
