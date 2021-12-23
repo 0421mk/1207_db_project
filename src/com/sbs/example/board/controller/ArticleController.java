@@ -44,6 +44,11 @@ public class ArticleController extends Controller {
 
 	private void doWrite() {
 		
+		if(session.getLoginedMember() == null) {
+			System.out.println("로그인 후 이용해주세요.");
+			return;
+		}
+		
 		String title;
 		String body;
 		
@@ -79,6 +84,11 @@ public class ArticleController extends Controller {
 	}
 
 	private void doModify() {
+		
+		if(session.getLoginedMember() == null) {
+			System.out.println("로그인 후 이용해주세요.");
+			return;
+		}
 		
 		boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
 		
@@ -134,12 +144,18 @@ public class ArticleController extends Controller {
 		System.out.printf("번호: %d\n", article.getId());
 		System.out.printf("등록날짜: %s\n", article.getRegDate());
 		System.out.printf("수정날짜: %s\n", article.getUpdateDate());
+		System.out.printf("작성자: %s\n", article.getExtra_writer());
 		System.out.printf("제목: %s\n", article.getTitle());
 		System.out.printf("내용: %s\n", article.getBody());
 		
 	}
 
 	private void doDelete() {
+		
+		if(session.getLoginedMember() == null) {
+			System.out.println("로그인 후 이용해주세요.");
+			return;
+		}
 		
 		boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
 		
