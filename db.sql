@@ -46,8 +46,16 @@ ALTER TABLE article ADD COLUMN memberId INT(10) UNSIGNED NOT NULL AFTER updateDa
 DESC article;
 SELECT * FROM article;
 
-#select a.*, m.name as extra_writer
-#from article as a
-#left join `member` as m
-#on a.memberId = m.id
-#where a.id = 9;
+SELECT a.*, m.name AS extra_writer
+FROM article AS a
+LEFT JOIN `member` AS m
+ON a.memberId = m.id
+WHERE a.id = 9;
+
+SELECT a.*, m.name AS extra_writer
+FROM article AS a
+LEFT JOIN `member` AS m
+ON a.memberId = m.id;
+
+ALTER TABLE article ADD COLUMN hit INT(10) UNSIGNED NOT NULL;
+SELECT * FROM article;
