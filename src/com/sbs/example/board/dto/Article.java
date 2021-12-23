@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public class Article {
-	public int id;
-	public LocalDateTime regDate;
-	public LocalDateTime updateDate;
-	public String title;
-	public String body;
+	private int id;
+	private LocalDateTime regDate;
+	private LocalDateTime updateDate;
+	private String title;
+	private String body;
 	
 	public Article(int id, LocalDateTime regDate, LocalDateTime updateDate, String title, String body) {
 		this.id = id;
@@ -24,5 +24,45 @@ public class Article {
 		this.updateDate = (LocalDateTime)articleMap.get("updateDate");
 		this.title = (String)articleMap.get("title");
 		this.body = (String)articleMap.get("body");
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public LocalDateTime getRegDate() {
+		return regDate;
+	}
+
+	public void setRegDate(LocalDateTime regDate) {
+		this.regDate = regDate;
+	}
+
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(LocalDateTime updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
 	}
 }

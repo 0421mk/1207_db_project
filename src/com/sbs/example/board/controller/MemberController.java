@@ -97,14 +97,14 @@ public class MemberController extends Controller {
 		
 		Member member = memberService.getMemberByLoginId(loginId);
 		
-		if(!member.loginPw.equals(loginPw)) {
+		if(!member.getLoginPw().equals(loginPw)) {
 			System.out.println("비밀번호가 일치하지 않습니다.");
 			return;
 		}
 		
-		System.out.printf("%s님 환영합니다. \n", member.name);
+		System.out.printf("%s님 환영합니다. \n", member.getName());
 		
-		session.setLoginedMemberId(member.id);
+		session.setLoginedMemberId(member.getId());
 		session.setLoginedMember(member);
 		
 	}
@@ -211,7 +211,7 @@ public class MemberController extends Controller {
 			return;
 		}
 		
-		System.out.printf("현재 로그인 유저: %s\n", session.getLoginedMember().name);
+		System.out.printf("현재 로그인 유저: %s\n", session.getLoginedMember().getName());
 		
 	}
 
