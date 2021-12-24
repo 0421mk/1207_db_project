@@ -26,6 +26,7 @@ public class ArticleDao {
 		sql.append(", memberId = ?", loginedMemberId);
 		sql.append(", title = ?", title);
 		sql.append(", body = ?", body);
+		sql.append(", hit = 0");
 		
 		int id = DBUtil.insert(conn, sql);
 		
@@ -33,7 +34,7 @@ public class ArticleDao {
 		
 	}
 
-	public List<Article> getArticles() {
+	public List<Article> getArticles(int limitFrom, int limitTake) {
 		
 		List<Article> articles = new ArrayList<>();
 		
@@ -44,6 +45,7 @@ public class ArticleDao {
 		sql.append("LEFT JOIN `member` AS m");
 		sql.append("ON a.memberId = m.id");
 		sql.append("ORDER BY a.id DESC");
+		sql.append("LIMIT ?, ?", limitFrom, limitTake);
 		
 		List<Map<String, Object>> articleListMap = DBUtil.selectRows(conn, sql);
 		
@@ -119,5 +121,40 @@ public class ArticleDao {
 		
 		DBUtil.update(conn, sql);
 		
+	}
+
+	public List<Article> getArticlesByKeyword(int limitFrom, int limitTake, String searchKeyword) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("SELECT a.*, m.name AS extra_writer");
+		sql.append("FROM article AS a");
+		sql.append("LEFT JOIN `member` AS m");
+		sql.append("ON a.memberId = m.id");
+		sql.append("WHERE a.title LIKE CONCAT('%', ?, '%')", searchKeyword);
+		sql.append("ORDER BY a.id DESC");
+		sql.append("LIMIT ?, ?", limitFrom, limitTake);
+		
+		List<Map<String, Object>> articleListMap = DBUtil.selectRows(conn, sql);
+		
+		List<Article> articles = new ArrayList<>();
+		
+		for(Map<String, Object> articleMap : articleListMap) {
+			articles.add(new Article(articleMap));
+		}
+		
+		return articles;
+	}
+
+	public int getArticlesCnt(String searchKeyword) {
+		SecSql sql = new SecSql();
+		
+		sql.append("SELECT COUNT(*)");
+		sql.append("FROM article");
+		if(searchKeyword != "") {
+			sql.append("WHERE title LIKE CONCAT('%', ?, '%')", searchKeyword);
+		}
+		
+		return DBUtil.selectRowIntValue(conn, sql);
 	}
 }

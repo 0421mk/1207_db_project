@@ -28,7 +28,7 @@ public class ArticleController extends Controller {
 		
 		if (cmd.equals("article write")) {
 			doWrite();
-		} else if (cmd.equals("article list")) {
+		} else if (cmd.startsWith("article list")) {
 			showList();
 		} else if (cmd.startsWith("article modify ")) {
 			doModify();
@@ -66,19 +66,59 @@ public class ArticleController extends Controller {
 	}
 
 	private void showList() {
+
+		String[] cmdBits = cmd.split(" ");
+		String searchKeyword = "";
+		List<Article> articles;
 		
 		System.out.println("== 게시글 목록 ==");
 		
-		List<Article> articles = articleService.getArticles();
+		int page = 1;
+		int itemsInAPage = 5;
 		
-		if(articles.size() == 0) {
-			System.out.println("게시글이 존재하지 않습니다.");
-			return;
-		}
-		
-		System.out.println("번호 / 제목 / 작성자");
-		for(Article article : articles) {
-			System.out.printf("%d / %s / %s\n", article.getId(), article.getTitle(), article.getExtra_writer());
+		while(true) {
+			
+			// 검색어가 있는 경우
+			if(cmdBits.length > 2) {
+				searchKeyword = cmd.substring("article list ".length());
+				articles = articleService.getArticlesByKeyword(page, itemsInAPage, searchKeyword);
+			} else { // 검색어가 없는 경우
+				if(cmd.length() != 12) {
+					System.out.println("명령어를 잘못 입력하셨습니다.");
+					return;
+				}
+				articles = articleService.getArticles(page, itemsInAPage);
+			}
+			
+			if(articles.size() == 0) {
+				System.out.println("게시글이 존재하지 않습니다.");
+				return;
+			}
+			
+			System.out.println("번호 / 제목 / 작성자");
+			for(Article article : articles) {
+				System.out.printf("%d / %s / %s\n", article.getId(), article.getTitle(), article.getExtra_writer());
+			}
+			
+			// 64/5.0=12, 12.8 => 13
+			// 정수, 실수 표현 방법이 다릅니다.
+			// 현재 페이지, 마지막 페이지, 전체 글 수
+			// articles.size()도 가능
+			int articlesCnt = articleService.getArticlesCnt(searchKeyword);
+			int lastPage = (int)Math.ceil(articlesCnt/(double)itemsInAPage);
+			
+			System.out.printf("현재 페이지: %d, 마지막 페이지: %d, 전체 글 수: %d\n", page, lastPage, articlesCnt);
+			System.out.println("== [페이지 이동] 번호, [종료] 0 이하의 수 입력 ==");
+			
+			System.out.printf("[article list] 명령어) ");
+			page = scanner.nextInt();
+			
+			scanner.nextLine();
+			
+			if(page <= 0) {
+				System.out.println("게시판 조회를 종료합니다.");
+				break;
+			}
 		}
 		
 	}
