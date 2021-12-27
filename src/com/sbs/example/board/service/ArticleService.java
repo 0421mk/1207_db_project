@@ -64,4 +64,16 @@ public class ArticleService {
 		return articleDao.getArticlesCnt(searchKeyword);
 	}
 
+	public void insertLike(int id, int likeType, int loginedMemberId) {
+		
+		articleDao.insertLike(id, likeType, loginedMemberId);
+		
+	}
+
+	public int likeCheckCnt(int id, int loginedMemberId) {
+		
+		return articleDao.likeCheckCnt(id, loginedMemberId);
+		
+	}
+
 }

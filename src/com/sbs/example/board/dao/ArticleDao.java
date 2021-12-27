@@ -157,4 +157,31 @@ public class ArticleDao {
 		
 		return DBUtil.selectRowIntValue(conn, sql);
 	}
+
+	public void insertLike(int id, int likeType, int loginedMemberId) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("INSERT INTO `like`");
+		sql.append("SET regDate = NOW()");
+		sql.append(", updateDate = NOW()");
+		sql.append(", articleId = ?", id);
+		sql.append(", memberId = ?", loginedMemberId);
+		sql.append(", likeType = ?", likeType);
+		
+		DBUtil.insert(conn, sql);
+		
+	}
+
+	public int likeCheckCnt(int id, int loginedMemberId) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("SELECT COUNT(*)");
+		sql.append("FROM `like`");
+		sql.append("WHERE articleId = ? AND memberId = ?", id, loginedMemberId);
+		
+		return DBUtil.selectRowIntValue(conn, sql);
+		
+	}
 }

@@ -36,8 +36,63 @@ public class ArticleController extends Controller {
 			showDetail();
 		} else if (cmd.startsWith("article delete ")) {
 			doDelete();
+		} else if (cmd.startsWith("article like ")) {
+			doLike();
 		} else {
 			System.out.println("존재하지 않는 명령어입니다.");
+		}
+		
+	}
+
+	private void doLike() {
+		
+		if(session.getLoginedMember() == null) {
+			System.out.println("로그인 후 이용해주세요.");
+			return;
+		}
+		
+		boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
+		
+		if(!isInt) {
+			System.out.println("게시글의 ID를 숫자로 입력해주세요.");
+			return;
+		}
+		
+		int id = Integer.parseInt(cmd.split(" ")[2].trim());
+		
+		int articlesCount = articleService.getArticlesCntById(id);
+		
+		if(articlesCount == 0) {
+			System.out.printf("%d번 게시글이 존재하지 않습니다.\n", id);
+			return;
+		}
+		
+		System.out.println("== 게시글 추천/비추천 ==");
+		System.out.println(">> [추천] 1, [비추천] 2, [해제] 3, [나가기] 0 <<");
+		
+		System.out.printf("[article like] 명령어) ");
+		int likeType = scanner.nextInt();
+		
+		scanner.nextLine();
+		
+		if(likeType == 0) {
+			System.out.println("[article like] 종료");
+			return;
+		}
+		
+		int likeCheckCnt = articleService.likeCheckCnt(id, session.getLoginedMemberId());
+		
+		if(likeType == 1 || likeType == 2) {
+			
+			articleService.insertLike(id, likeType, session.getLoginedMemberId());
+			
+			String msg = (likeType == 1 ? "추천" : "비추천");
+			System.out.println(msg + " 완료");
+			
+		} else if(likeType == 3) {
+			System.out.println("해제");
+		} else {
+			System.out.println("0~3 까지의 수만 입력해주세요.");
 		}
 		
 	}
