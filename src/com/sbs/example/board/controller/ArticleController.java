@@ -81,18 +81,47 @@ public class ArticleController extends Controller {
 		}
 		
 		int likeCheckCnt = articleService.likeCheckCnt(id, session.getLoginedMemberId());
+		// likeCheck : 추천/비추천하지 않았다면 0, 추천했다면 1, 비추천했다면 2
 		
-		if(likeType == 1 || likeType == 2) {
+		if(likeCheckCnt == 0) {
 			
-			articleService.insertLike(id, likeType, session.getLoginedMemberId());
+			if(likeType == 1 || likeType == 2) {
+				
+				articleService.insertLike(id, likeType, session.getLoginedMemberId());
+				
+				String msg = (likeType == 1 ? "추천" : "비추천");
+				System.out.println(msg + " 완료");
+				
+			} else if(likeType == 3) {
+				System.out.println("해제할 추천/비추천이 존재하지 않습니다.");
+			} else {
+				System.out.println("0~3 까지의 수만 입력해주세요.");
+			}
 			
-			String msg = (likeType == 1 ? "추천" : "비추천");
-			System.out.println(msg + " 완료");
-			
-		} else if(likeType == 3) {
-			System.out.println("해제");
 		} else {
-			System.out.println("0~3 까지의 수만 입력해주세요.");
+			// 결과값이 1 또는 2
+			
+			if(likeType == 3) {
+				articleService.deleteLike(id, session.getLoginedMemberId());
+				String msg = (likeCheckCnt == 1 ? "추천" : "비추천");
+				System.out.println(msg + "을 취소합니다.");
+				return;
+			}
+			
+			if(likeType == likeCheckCnt) {
+				String msg = (likeType == 1 ? "추천" : "비추천");
+				System.out.println("이미 " + msg + "하였습니다.");
+				return;
+			} else {
+				// 있는데 같지않다면
+				// 추천한 상태인데 비추천으로 변경
+				// modify
+				articleService.modifyLike(id, likeType, session.getLoginedMemberId());
+				
+				String msg = (likeType == 1 ? "추천" : "비추천");
+				System.out.println(msg + "으로 변경 완료");
+			}
+			
 		}
 		
 	}

@@ -76,4 +76,16 @@ public class ArticleService {
 		
 	}
 
+	public void deleteLike(int id, int loginedMemberId) {
+		
+		articleDao.deleteLike(id, loginedMemberId);
+		
+	}
+
+	public void modifyLike(int id, int likeType, int loginedMemberId) {
+		
+		articleDao.modifyLike(id, likeType, loginedMemberId);
+		
+	}
+
 }

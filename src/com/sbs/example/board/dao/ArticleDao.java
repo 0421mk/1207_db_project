@@ -175,13 +175,44 @@ public class ArticleDao {
 
 	public int likeCheckCnt(int id, int loginedMemberId) {
 		
+		// 데이터가 있다면 likeType 반환
+		// 데이터가 없다면 0 반환
+		
 		SecSql sql = new SecSql();
 		
-		sql.append("SELECT COUNT(*)");
+		sql.append("SELECT");
+		sql.append("CASE WHEN COUNT(*) != 0");
+		sql.append("THEN likeType ELSE 0 END");
 		sql.append("FROM `like`");
 		sql.append("WHERE articleId = ? AND memberId = ?", id, loginedMemberId);
 		
 		return DBUtil.selectRowIntValue(conn, sql);
+		
+	}
+
+	public void deleteLike(int id, int loginedMemberId) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("DELETE FROM `like`");
+		sql.append("WHERE articleId = ?", id);
+		sql.append("AND memberId = ?", loginedMemberId);
+		
+		DBUtil.delete(conn, sql);
+		
+	}
+
+	public void modifyLike(int id, int likeType, int loginedMemberId) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("UPDATE `like`");
+		sql.append("SET updateDate = NOW()");
+		sql.append(", likeType = ?", likeType);
+		sql.append("WHERE articleId = ?", id);
+		sql.append("AND memberId = ?", loginedMemberId);
+		
+		DBUtil.update(conn, sql);
 		
 	}
 }
