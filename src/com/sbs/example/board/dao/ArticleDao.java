@@ -187,8 +187,8 @@ public class ArticleDao {
 		sql.append("WHERE articleId = ? AND memberId = ?", id, loginedMemberId);
 		
 		return DBUtil.selectRowIntValue(conn, sql);
-		
 	}
+	
 
 	public void deleteLike(int id, int loginedMemberId) {
 		
@@ -214,5 +214,31 @@ public class ArticleDao {
 		
 		DBUtil.update(conn, sql);
 		
+	}
+
+	public int getLikeVal(int id, int likeType) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("SELECT COUNT(*)");
+		sql.append("FROM `like`");
+		sql.append("WHERE articleId = ? AND likeType = ?", id, likeType);
+		
+		return DBUtil.selectRowIntValue(conn, sql);
+	}
+
+	public int writeComment(int id, String title, String body, int loginedMemberId) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("INSERT INTO `comment`");
+		sql.append("SET regDate = NOW()");
+		sql.append(", updateDate = NOW()");
+		sql.append(", articleId = ?", id);
+		sql.append(", memberId = ?", loginedMemberId);
+		sql.append(", title = ?", title);
+		sql.append(", body = ?", body);
+		
+		return DBUtil.insert(conn, sql);
 	}
 }

@@ -1,9 +1,11 @@
 package com.sbs.example.board.controller;
 
 import java.sql.Connection;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import com.sbs.example.board.dao.ArticleDao;
 import com.sbs.example.board.dto.Article;
 import com.sbs.example.board.service.ArticleService;
 import com.sbs.example.board.session.Session;
@@ -38,10 +40,93 @@ public class ArticleController extends Controller {
 			doDelete();
 		} else if (cmd.startsWith("article like ")) {
 			doLike();
+		} else if (cmd.startsWith("article comment ")) {
+			doComment();
 		} else {
 			System.out.println("존재하지 않는 명령어입니다.");
 		}
 		
+	}
+
+	private void doComment() {
+		
+		if(session.getLoginedMember() == null) {
+			System.out.println("로그인 후 이용해주세요.");
+			return;
+		}
+		
+		boolean isInt = cmd.split(" ")[2].matches("-?\\d+");
+		
+		if(!isInt) {
+			System.out.println("게시글의 ID를 숫자로 입력해주세요.");
+			return;
+		}
+		
+		int id = Integer.parseInt(cmd.split(" ")[2].trim());
+		
+		int articlesCount = articleService.getArticlesCntById(id);
+		
+		if(articlesCount == 0) {
+			System.out.printf("%d번 게시글이 존재하지 않습니다.\n", id);
+			return;
+		}
+		
+		System.out.printf("== %d번 게시글의 댓글 ==\n", id);
+		
+		while(true) {
+			
+			// 댓글이 존재하지 않습니다.
+			// 댓글 리스팅 (페이징 적용)
+			
+			System.out.println(">> [댓글쓰기] 1, [수정] 2, [삭제] 3, [페이징] 4, [나가기] 0 <<");
+			
+			int commentType;
+			
+			while(true) {
+				try {
+					System.out.printf("[article comment] 명령어) ");
+					commentType = new Scanner(System.in).nextInt();
+					
+					break;
+				} catch(InputMismatchException e) {
+					System.out.println("정상적인 숫자를 입력해주세요.");
+				}
+			}
+			
+			if(commentType == 1) {
+				
+				System.out.println("== 댓글 작성 ==");
+				
+				String title;
+				String body;
+				
+				System.out.printf("댓글 제목: ");
+				title = scanner.nextLine();
+				System.out.printf("댓글 내용: ");
+				body = scanner.nextLine();
+				
+				int commentId = articleService.writeComment(id, title, body, session.getLoginedMemberId());
+				
+				System.out.printf("%d번 게시글에 %d번 댓글이 생성되었습니다.\n", id, commentId);
+				
+			} else if(commentType == 2) {
+				System.out.println("== 댓글 수정 ==");
+				
+				// >> [수정할 댓글의 id], [취소] 0 <<
+				int commentId = scanner.nextInt();
+				
+			} else if(commentType == 3) {
+				System.out.println("== 댓글 삭제 ==");
+			} else if(commentType == 4) {
+				System.out.println("== 댓글 페이징 ==");
+			} else if(commentType == 0) {
+				System.out.println("== 댓글 종료 ==");
+				return;
+			} else {
+				System.out.println("가이드에 표시된 숫자만 입력해주세요.");
+			}
+		}
+
 	}
 
 	private void doLike() {
@@ -274,11 +359,16 @@ public class ArticleController extends Controller {
 		
 		Article article = articleService.getArticle(id);
 		
+		int likeVal = articleService.getLikeVal(id, 1); // 해당 게시글의 추천 수
+		int disLikeVal = articleService.getLikeVal(id, 2); // 해당 게시글의 반대 수
+		
 		System.out.printf("번호: %d\n", article.getId());
 		System.out.printf("등록날짜: %s\n", article.getRegDate());
 		System.out.printf("수정날짜: %s\n", article.getUpdateDate());
 		System.out.printf("작성자: %s\n", article.getExtra_writer());
 		System.out.printf("조회수: %d\n", article.getHit());
+		System.out.printf("추천: %d\n", likeVal);
+		System.out.printf("반대: %d\n", disLikeVal);
 		System.out.printf("제목: %s\n", article.getTitle());
 		System.out.printf("내용: %s\n", article.getBody());
 		
