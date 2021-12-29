@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import com.sbs.example.board.dao.ArticleDao;
 import com.sbs.example.board.dto.Article;
+import com.sbs.example.board.dto.Comment;
 import com.sbs.example.board.service.ArticleService;
 import com.sbs.example.board.session.Session;
 
@@ -117,8 +118,8 @@ public class ArticleController extends Controller {
 				while(true) {
 					try {
 						System.out.printf(">> [수정할 댓글의 id], [취소] 0 <<) ");
-						commentId = scanner.nextInt();
-						
+						commentId = new Scanner(System.in).nextInt();
+												
 						break;
 					} catch(InputMismatchException e) {
 						System.out.println("정상적인 숫자를 입력해주세요.");
@@ -131,10 +132,33 @@ public class ArticleController extends Controller {
 				
 				int commentCnt = articleService.getCommentCntById(commentId, id);
 				
+				if (commentCnt == 0) {
+					System.out.println("수정할 댓글이 존재하지 않습니다.");
+					continue;
+				}
+				
+				Comment comment = articleService.getCommentById(commentId);
+				
+				if (comment.getMemberId() != session.getLoginedMemberId()) {
+					System.out.println("댓글 수정 권한이 없습니다.");
+					continue;
+				}
+								
+				System.out.printf("새 댓글 제목: ");
+				String title = scanner.nextLine();
+				
+				System.out.printf("새 댓글 내용: ");
+				String body = scanner.nextLine();
+				
+				articleService.modifyComment(commentId, title, body);
+				System.out.printf("%d번 게시글의 %d번 댓글이 수정되었습니다.\n", id, commentId);
+				
 			} else if(commentType == 3) {
 				System.out.println("== 댓글 삭제 ==");
 			} else if(commentType == 4) {
 				System.out.println("== 댓글 페이징 ==");
+				// 현재 페이지: 1, 전체 페이지: 13, 전체 댓글 수: 30, 나가기
+				// article comment page) 
 			} else if(commentType == 0) {
 				System.out.println("== 댓글 종료 ==");
 				return;

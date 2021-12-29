@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.sbs.example.board.dao.ArticleDao;
 import com.sbs.example.board.dto.Article;
+import com.sbs.example.board.dto.Comment;
 
 public class ArticleService {
 	ArticleDao articleDao;
@@ -102,6 +103,17 @@ public class ArticleService {
 		
 		return articleDao.getCommentCntById(commentId, id);
 	
+	}
+
+	public Comment getCommentById(int commentId) {
+		
+		return articleDao.getCommentById(commentId);
+	}
+
+	public void modifyComment(int commentId, String title, String body) {
+		
+		articleDao.modifyComment(commentId, title, body);
+		
 	}
 
 }

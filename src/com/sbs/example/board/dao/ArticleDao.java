@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sbs.example.board.dto.Article;
+import com.sbs.example.board.dto.Comment;
 import com.sbs.example.board.util.DBUtil;
 import com.sbs.example.board.util.SecSql;
 
@@ -251,5 +252,32 @@ public class ArticleDao {
 		sql.append("WHERE id = ? AND articleId = ?", commentId, id);
 		
 		return DBUtil.selectRowIntValue(conn, sql);
+	}
+
+	public Comment getCommentById(int commentId) {
+
+		SecSql sql = new SecSql();
+		
+		sql.append("SELECT *");
+		sql.append("FROM `comment`");
+		sql.append("WHERE id = ?", commentId);
+		
+		Map<String, Object> commentMap = DBUtil.selectRow(conn, sql);
+		
+		return new Comment(commentMap);
+	}
+
+	public void modifyComment(int commentId, String title, String body) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("UPDATE `comment`");
+		sql.append("SET updateDate = NOW()");
+		sql.append(", title = ?", title);
+		sql.append(", body = ?", body);
+		sql.append("WHERE id = ?", commentId);
+		
+		DBUtil.update(conn, sql);
+		
 	}
 }
