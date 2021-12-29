@@ -155,10 +155,65 @@ public class ArticleController extends Controller {
 				
 			} else if(commentType == 3) {
 				System.out.println("== 댓글 삭제 ==");
+				
+				int commentId;
+				
+				while(true) {
+					try {
+						System.out.printf(">> [삭제할 댓글의 id], [취소] 0 <<) ");
+						commentId = new Scanner(System.in).nextInt();
+												
+						break;
+					} catch(InputMismatchException e) {
+						System.out.println("정상적인 숫자를 입력해주세요.");
+					}
+				}
+				
+				if(commentId == 0) {
+					continue;
+				}
+				
+				int commentCnt = articleService.getCommentCntById(commentId, id);
+				
+				if (commentCnt == 0) {
+					System.out.println("삭제할 댓글이 존재하지 않습니다.");
+					continue;
+				}
+				
+				Comment comment = articleService.getCommentById(commentId);
+				
+				if (comment.getMemberId() != session.getLoginedMemberId()) {
+					System.out.println("댓글 삭제 권한이 없습니다.");
+					continue;
+				}
+								
+				articleService.deleteComment(commentId);
+
+				System.out.printf("%d번 게시글의 %d번 댓글이 삭제되었습니다.\n", id, commentId);
+				
 			} else if(commentType == 4) {
 				System.out.println("== 댓글 페이징 ==");
-				// 현재 페이지: 1, 전체 페이지: 13, 전체 댓글 수: 30, 나가기
+				// 현재 페이지: 1, 전체 페이지: 13, 전체 댓글 수: 30, 나가기 0 이하는 나가기
 				// article comment page) 
+				
+				int page = 1;
+				int itemsInAPage = 5;
+				
+				while(true) {
+					List<Comment> pageComments = articleService.getCommentsByPage(id, page, itemsInAPage);
+					
+					if(pageComments.size() == 0) {
+						System.out.println("댓글이 존재하지 않습니다.");
+						break;
+					}
+					
+					for (Comment comment : pageComments) {
+						System.out.printf("[%d] 작성자: %s, 제목: %s, 내용: %s\n", comment.getId(), comment.getExtra_writer(), comment.getTitle(), comment.getBody());
+					}
+				}
+				
+				
+				
 			} else if(commentType == 0) {
 				System.out.println("== 댓글 종료 ==");
 				return;
