@@ -112,8 +112,24 @@ public class ArticleController extends Controller {
 			} else if(commentType == 2) {
 				System.out.println("== 댓글 수정 ==");
 				
-				// >> [수정할 댓글의 id], [취소] 0 <<
-				int commentId = scanner.nextInt();
+				int commentId;
+				
+				while(true) {
+					try {
+						System.out.printf(">> [수정할 댓글의 id], [취소] 0 <<) ");
+						commentId = scanner.nextInt();
+						
+						break;
+					} catch(InputMismatchException e) {
+						System.out.println("정상적인 숫자를 입력해주세요.");
+					}
+				}
+				
+				if(commentId == 0) {
+					continue;
+				}
+				
+				int commentCnt = articleService.getCommentCntById(commentId, id);
 				
 			} else if(commentType == 3) {
 				System.out.println("== 댓글 삭제 ==");

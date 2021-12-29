@@ -98,4 +98,10 @@ public class ArticleService {
 		
 	}
 
+	public int getCommentCntById(int commentId, int id) {
+		
+		return articleDao.getCommentCntById(commentId, id);
+	
+	}
+
 }
