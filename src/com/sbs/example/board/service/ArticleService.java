@@ -133,4 +133,8 @@ public class ArticleService {
 		return articleDao.getCommentsCnt(id);
 	}
 
+	public List<Article> getArticles() {
+		return articleDao.getArticles();
+	}
+
 }
