@@ -58,21 +58,21 @@ LEFT JOIN `member` AS m
 ON a.memberId = m.id
 ORDER BY a.id DESC;
 
-ALTER TABLE article ADD COLUMN hit INT(10) UNSIGNED NOT NULL;
-SELECT * FROM article;
+alter table article add column hit int(10) unsigned not null;
+select * from article;
 
 SELECT a.*, m.name AS extra_writer
 FROM article AS a
 LEFT JOIN `member` AS m
 ON a.memberId = m.id
-WHERE a.title LIKE '%d%';
+where a.title like '%d%';
 
-SELECT * FROM `member`;
-DESC article;
+select * from `member`;
+desc article;
 
-INSERT INTO article
-SET regDate = NOW(),
-updateDate = NOW(),
+insert into article
+set regDate = now(),
+updateDate = now(),
 memberId = 1,
 title = '제목1',
 `body` = '내용1',
@@ -110,7 +110,7 @@ title = '제목5',
 `body` = '내용5',
 hit = 60;
 
-SELECT * FROM article;
+select * from article;
 
 ## getArticles 페이징
 SELECT a.*, m.name AS extra_writer
@@ -118,64 +118,70 @@ FROM article AS a
 LEFT JOIN `member` AS m
 ON a.memberId = m.id
 ORDER BY a.id DESC
-LIMIT 15, 5;
+limit 15, 5;
 
-SELECT COUNT(*)
-FROM article
+select count(*)
+from article
 WHERE title LIKE '%d%';
 
 ## like 테이블 생성
 ## liketype 1 = 추천, 2 = 반대
-CREATE TABLE `like` (
-    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY(id),
-    regDate DATETIME NOT NULL,
-    updateDate DATETIME NOT NULL,
-    articleId INT(10) UNSIGNED NOT NULL,
-    memberId INT(10) UNSIGNED NOT NULL,
-    likeType TINYINT(1) NOT NULL
+create table `like` (
+    id int(10) unsigned not null auto_increment,
+    primary key(id),
+    regDate datetime not null,
+    updateDate datetime not null,
+    articleId int(10) unsigned not null,
+    memberId int(10) unsigned not null,
+    likeType tinyint(1) not null
 );
 
-DROP TABLE `like`;
+drop table `like`;
 
-DESC `like`;
-SELECT * FROM `like`;
-SELECT * FROM article;
-SELECT * FROM `member`;
+desc `like`;
+select * from `like`;
+select * from article;
+select * from `member`;
 
 ## like 했는지 체크
 ## 추천/비추천 했다면 해당하는 likeType 값 리턴
 ## 추천/비추천 안했다면 0 리턴
-SELECT
-CASE WHEN COUNT(*) != 0
-THEN likeType ELSE 0 END
-FROM `like`
-WHERE articleId = 69 AND memberId = 1;
+select
+case when count(*) != 0
+then likeType else 0 end
+from `like`
+where articleId = 69 and memberId = 1;
 
-SELECT COUNT(*)
-FROM `like`
-WHERE articleId = 69 AND likeType = 2;
+select COUNT(*)
+from `like`
+where articleId = 69 and likeType = 2;
 
 SELECT *
 FROM `like`
 WHERE articleId = 6;
 
 ## comment 테이블 생성
-CREATE TABLE `comment` (
-    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY(id),
-    regDate DATETIME NOT NULL,
-    updateDate DATETIME NOT NULL,
-    articleId INT(10) UNSIGNED NOT NULL,
-    memberId INT(10) UNSIGNED NOT NULL,
-    title CHAR(100) NOT NULL,
-    `body` CHAR(100) NOT NULL
+create table `comment` (
+    id int(10) unsigned not null auto_increment,
+    primary key(id),
+    regDate datetime not null,
+    updateDate datetime not null,
+    articleId int(10) unsigned not null,
+    memberId int(10) unsigned not null,
+    title char(100) not null,
+    `body` char(100) not null
 );
 
-DESC `comment`;
-SELECT * FROM `comment`;
+desc `comment`;
+select * from `comment`;
 
-SELECT COUNT(*)
-FROM `comment`
-WHERE id = 3 AND articleId = 69;
+select count(*)
+from `comment`
+where id = 3 and articleId = 69;
 
+select c.*, m.name as extra_writer
+from `comment` c
+inner join `member` m
+on c.memberId = m.id
+where articleId = 69
+limit 5, 5;

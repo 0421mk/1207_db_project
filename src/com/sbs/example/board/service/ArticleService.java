@@ -129,4 +129,8 @@ public class ArticleService {
 		return articleDao.getCommentsByPage(id, limitFrom, limitTake);
 	}
 
+	public int getCommentsCnt(int id) {
+		return articleDao.getCommentsCnt(id);
+	}
+
 }

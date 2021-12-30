@@ -313,4 +313,16 @@ public class ArticleDao {
 		
 		return comments;
 	}
+
+	public int getCommentsCnt(int id) {
+		
+		SecSql sql = new SecSql();
+		
+		sql.append("SELECT COUNT(*)");
+		sql.append("FROM `comment`");
+		sql.append("WHERE articleId = ?", id);
+		
+		return DBUtil.selectRowIntValue(conn, sql);
+		
+	}
 }
